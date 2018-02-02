@@ -1,0 +1,102 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public class GameManager : MonoBehaviour {
+    bool timerStarted;
+    bool matchStarted = true;
+    float timer = 60;
+
+    public OutlineText timerText;
+    public bool hitFreeze = false;          //Short pause after every hit (a la, Street Fighter)
+    FighterController player1;
+    FighterController player2;
+
+    public Animator combo1Animator;
+    public Animator combo2Animator;
+
+    OutlineText combo1Text;
+    OutlineText combo2Text;
+    KOText koText;
+
+	// Use this for initialization
+	void Start () {
+        startTimer();
+        FighterController[] fighters = FindObjectsOfType<FighterController>();
+        player1 = fighters[0];
+        player2 = fighters[1];
+        if (fighters[1].playerID < player1.playerID) {
+            player1 = fighters[1];
+            player2 = fighters[0];
+        }
+
+        combo1Text = combo1Animator.gameObject.GetComponentInChildren<OutlineText>();
+        combo2Text = combo2Animator.gameObject.GetComponentInChildren<OutlineText>();
+
+        koText = FindObjectOfType<KOText>();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+        //Handles the match timer
+        int time = Mathf.RoundToInt(timer);
+        if (time <= 0 && matchStarted) {
+            time = 0;
+            timerStarted = false;
+            timerText.mainText.text = 0.ToString();
+            koText.switchGraphic();
+            koText.display();
+            matchStarted = false;
+        } else {
+            timerText.mainText.text = Mathf.RoundToInt(timer).ToString();
+            if (timerStarted) {
+                timer = timer - (Time.deltaTime);
+            }
+        }
+
+        //Handles match reset
+        //Check for if a player is dead
+        if (matchStarted && (player1.health <= 0 || player2.health <= 0)) {
+            koText.display();
+            matchStarted = false;
+            print("MATCH ENDED");
+        }
+
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+	}
+
+    //Handles event of Combo increments
+    public void comboInc(int playerID, int comboValue) {
+        if (playerID == player1.playerID) {
+            combo2Text.mainText.text = comboValue.ToString() + " HIT\nCOMBO!";
+            combo2Animator.SetTrigger("Appear");
+        } else if (playerID == player2.playerID) {
+            combo1Text.mainText.text = comboValue.ToString() + " HIT\nCOMBO!";
+            combo1Animator.SetTrigger("Appear");
+        }
+    }
+
+    public void endCombo(int playerID) {
+        if (playerID == player1.playerID) {
+            combo2Animator.SetTrigger("Disappear");
+        } else if (playerID == player2.playerID) {
+            combo1Animator.SetTrigger("Disappear");
+        }
+    }
+
+    //Round-Timer Functionality
+    public void startTimer() {
+        timerStarted = true;
+    }
+
+    public void stopTimer() {
+        timerStarted = false;
+    }
+
+
+    
+}
