@@ -9,6 +9,8 @@ public class CameraFunctions : MonoBehaviour {
     public GameObject Player1;
     public GameObject Player2;
 
+    public int zoomOutDist = 12;
+
     Camera cam;
     bool shaking = false;
     GameObject target;      //The object to focus on
@@ -41,7 +43,7 @@ public class CameraFunctions : MonoBehaviour {
         if (focusing) {
             float dist = Mathf.Abs(Player1.transform.position.x - Player2.transform.position.x);
 
-            if (dist > 12) {
+            if (dist > zoomOutDist) {
                 transform.position = Vector3.Slerp(transform.position, new Vector3(centerStage.transform.position.x, target.transform.position.y + yFactor, centerStage.transform.position.z), 0.02f);
             } else {
                 transform.position = Vector3.Slerp(transform.position, new Vector3((Player1.transform.position.x + Player2.transform.position.x) / 2, Mathf.Min(originalPosition.y + 2.5f, target.transform.position.y + yFactor), originalPosition.z), 0.02f);

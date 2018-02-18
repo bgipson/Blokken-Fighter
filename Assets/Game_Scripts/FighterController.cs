@@ -263,4 +263,8 @@ public class FighterController : MonoBehaviour {
     public int getComboCounter() {
         return playerHitbox.comboCounter;
     }
+    
+    public float getDirConstant() {
+        return dirConstant;
+    }
 }
