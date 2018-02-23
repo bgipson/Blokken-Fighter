@@ -9,8 +9,6 @@ public class NoiseTexture : MonoBehaviour {
     private RawImage image;
     public int textureSize = 64;
 
-    private float last = Time.time;
-
 	// Use this for initialization
 	void Start () {
         image = GetComponent<RawImage>();
