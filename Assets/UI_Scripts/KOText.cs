@@ -59,6 +59,11 @@ public class KOText : MonoBehaviour {
     //Change this behaviour depending on if this is first round/second round/tie-breaker
     IEnumerator endRound(float waitTime) {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (RoundManager.player1Wins == 2 || RoundManager.player2Wins == 2) {
+            SceneManager.LoadScene(0);
+        } else {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        
     }
 }
