@@ -23,25 +23,37 @@ public class LightningTexture : MonoBehaviour {
         image.texture = texture;
 	}
 
+    float Noise(float y)
+    {
+        return Mathf.PerlinNoise(y / ((float)textureY / 10.0f), Random.value * 100f)
+            + (Mathf.PerlinNoise(y / ((float)textureY / 5.0f), Random.value * 100f) / 2.0f);
+    }
+
     Texture MakeLightningTexture()
     {
+        float last = Random.value * textureX;
         Texture2D lightning = new Texture2D(textureX, textureY);
-        for (int y = 0; y < textureY; y++)
+        for (int s = 0; s < textureY; s += 10)
         {
-            int rand = Mathf.FloorToInt(Mathf.PerlinNoise(y / ((float) textureY * 100f), Random.value * 100f) * textureX);
-            for (int x = 0; x < textureX; x++)
+            float rand = Random.value * textureX;
+            for (int y = 0; y < 10 && (s + y < textureY); y++)
             {
-                Color c;
-                if (Mathf.Abs(x - rand) < 2)
+                for (int x = 0; x < textureX; x++)
                 {
-                    c = new Color(1, 1, 1);
+                    float posX = Mathf.Lerp(last, rand, y / 10f);
+                    Color c;
+                    if (Mathf.Abs(x - posX) < 2)
+                    {
+                        c = new Color(1, 1, 1);
+                    }
+                    else
+                    {
+                        c = new Color(0, 0, 0, 0);
+                    }
+                    lightning.SetPixel(x, s + y, c);
                 }
-                else
-                {
-                    c = new Color(0, 0, 0, 0);
-                }
-                lightning.SetPixel(x, y, c);
             }
+            last = rand;
         }
 
         lightning.Apply();
