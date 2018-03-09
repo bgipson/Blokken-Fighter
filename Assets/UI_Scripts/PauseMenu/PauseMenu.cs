@@ -31,6 +31,8 @@ public class PauseMenu : MonoBehaviour {
         setEvent(resumeMatch);
         animator.SetTrigger("Start");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        RoundManager.player1Wins = 0;
+        RoundManager.player2Wins = 0;
     }
 
     public EventSystem eventSystem;
