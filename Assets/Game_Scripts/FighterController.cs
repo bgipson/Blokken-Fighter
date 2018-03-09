@@ -23,7 +23,9 @@ public class FighterController : MonoBehaviour {
     public int jab_1_num = 0; //The first jab in the three hit combo
     public int jab_2_num = 0; //The second jab in the three hit combo
     public int jab_3_num = 0; //The third jab in the three hit combo
-    public int up_air_num = 0;  
+    public int up_tilt_num = 0; //The Uppercut (Up-Arrow + Attack)
+    public int up_air_num = 0; 
+    public int down_air_num = 0; 
 
     public bool controllable = true;      //If deactivated, then fighting controls are disabled for the player
 
@@ -39,17 +41,14 @@ public class FighterController : MonoBehaviour {
         animator.SetInteger("Jab_2_Num", jab_2_num);
         animator.SetInteger("Jab_3_Num", jab_3_num);
         animator.SetInteger("Up_Air_Num", up_air_num);
+        animator.SetInteger("Down_Air_Num", down_air_num);
+        animator.SetInteger("Up_Tilt_Num", up_tilt_num);
     }
 
     // Update is called once per frame
     void Update() {
         //DEBUG CONTROLS - REMOVE FROM FULL VERSION
         #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.P)) {
-            if (playerID == 2) {
-                animator.SetBool("Attack", true);
-            }
-        }
         #endif
 
         dirConstant = Mathf.Sign(transform.position.x - target.transform.position.x);
@@ -103,7 +102,7 @@ public class FighterController : MonoBehaviour {
         }
 
         //For Up Attacks
-        animator.SetBool("Up", (p1 && Input.GetKey(KeyCode.UpArrow)) || (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
+        animator.SetBool("Up",  (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
 
         //For Guarding
         animator.SetBool("Guard", (p1 && Input.GetButton("Guard_1P")) || (p2 && Input.GetButton("Guard_2P")));
@@ -137,6 +136,7 @@ public class FighterController : MonoBehaviour {
 
         if ((p1 && Input.GetButtonDown("Jump_1P") || (p2 && Input.GetButtonDown("Jump_2P"))) && animator.GetBool("Moveable") && animator.GetBool("Grounded")) {
             animator.SetBool("Jump", true);
+            animator.SetBool("DamageCheck", false);
             rig.velocity = new Vector3(rig.velocity.x, jumpHeight, rig.velocity.z);
         }
     }
@@ -252,13 +252,42 @@ public class FighterController : MonoBehaviour {
 
     //Kick Style Moves
     public void kicker_up_kick() {
-        rig.velocity = new Vector3(rig.velocity.x, 16, 0);
+        rig.velocity = new Vector3(0, 16, 0);
     }
     
     public void kick_jab_2() {
         rig.velocity = new Vector3(-dirConstant * 20, 5, 0);
     }
 
+    float skidDir = 1;
+    public void kick_down_aerial(int i) {
+        skidDir = dirConstant;
+        if (i == 0) {
+            rig.velocity = new Vector3(dirConstant * 20, 20);
+        } else {
+            rig.velocity = new Vector3(-dirConstant * 60, -40);
+        }
+    }
+
+    public void kick_down_landing() {
+        rig.velocity = new Vector3(-skidDir * 50, 0);
+    }
+
+    public void kick_up_tilt(int i) {
+        if (i == 0) {
+            skidDir = dirConstant;
+        } else if (i == 1 && (animator.GetBool("Jump") == false)) {
+            rig.velocity = new Vector3(skidDir * 40, rig.velocity.y);
+        } else if (i == 2) {
+            animator.SetBool("Moveable", true);
+            animator.SetBool("DamageCheck", true);
+        } else if (i == 3) {
+            animator.SetBool("Moveable", false);
+            animator.SetBool("DamageCheck", false);
+        } else if (animator.GetBool("Jump") == false) {
+            rig.velocity = new Vector3(skidDir * 20, rig.velocity.y, 0);
+        }
+    }
 
     public int getComboCounter() {
         return playerHitbox.comboCounter;
