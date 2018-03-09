@@ -49,11 +49,6 @@ public class FighterController : MonoBehaviour {
     void Update() {
         //DEBUG CONTROLS - REMOVE FROM FULL VERSION
         #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.P)) {
-            if (playerID == 2) {
-                animator.SetBool("Attack", true);
-            }
-        }
         #endif
 
         dirConstant = Mathf.Sign(transform.position.x - target.transform.position.x);
@@ -107,7 +102,7 @@ public class FighterController : MonoBehaviour {
         }
 
         //For Up Attacks
-        animator.SetBool("Up", (p1 && Input.GetKey(KeyCode.UpArrow)) || (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
+        animator.SetBool("Up",  (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
 
         //For Guarding
         animator.SetBool("Guard", (p1 && Input.GetButton("Guard_1P")) || (p2 && Input.GetButton("Guard_2P")));
