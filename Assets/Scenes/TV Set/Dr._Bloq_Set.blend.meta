@@ -1,0 +1,197 @@
+fileFormatVersion: 2
+guid: 73fb9a7b699714affa25fa42f2016efb
+timeCreated: 1520026190
+licenseType: Free
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Cube_001
+    100002: Cube_002
+    100004: //RootNode
+    100006: Dr_Bloq
+    100008: Stage
+    100010: Backing
+    100012: Camera_1
+    100014: Camera_2
+    100016: Camera_Mount
+    100018: Camera_Mount_001
+    100020: Chair_1
+    100022: Chair_2
+    100024: Chair_3
+    100026: Film_Reel
+    100028: Film_Reel_001
+    100030: Floor
+    100032: Stage_Base
+    100034: Text
+    100036: TV
+    100038: TV_Base
+    100040: TV_Logo
+    100042: TV_Screen
+    400000: Cube_001
+    400002: Cube_002
+    400004: //RootNode
+    400006: Dr_Bloq
+    400008: Stage
+    400010: Backing
+    400012: Camera_1
+    400014: Camera_2
+    400016: Camera_Mount
+    400018: Camera_Mount_001
+    400020: Chair_1
+    400022: Chair_2
+    400024: Chair_3
+    400026: Film_Reel
+    400028: Film_Reel_001
+    400030: Floor
+    400032: Stage_Base
+    400034: Text
+    400036: TV
+    400038: TV_Base
+    400040: TV_Logo
+    400042: TV_Screen
+    2100000: unnamed
+    2300000: Cube_001
+    2300002: Cube_002
+    2300004: Dr_Bloq
+    2300006: Stage
+    2300008: Backing
+    2300010: Camera_1
+    2300012: Camera_2
+    2300014: Camera_Mount
+    2300016: Camera_Mount_001
+    2300018: Chair_1
+    2300020: Chair_2
+    2300022: Chair_3
+    2300024: Film_Reel
+    2300026: Film_Reel_001
+    2300028: Floor
+    2300030: Stage_Base
+    2300032: Text
+    2300034: TV
+    2300036: TV_Base
+    2300038: TV_Logo
+    2300040: TV_Screen
+    3300000: Cube_001
+    3300002: Cube_002
+    3300004: Dr_Bloq
+    3300006: Stage
+    3300008: Backing
+    3300010: Camera_1
+    3300012: Camera_2
+    3300014: Camera_Mount
+    3300016: Camera_Mount_001
+    3300018: Chair_1
+    3300020: Chair_2
+    3300022: Chair_3
+    3300024: Film_Reel
+    3300026: Film_Reel_001
+    3300028: Floor
+    3300030: Stage_Base
+    3300032: Text
+    3300034: TV
+    3300036: TV_Base
+    3300038: TV_Logo
+    3300040: TV_Screen
+    4300000: Stage
+    4300002: Cube_001
+    4300004: Cube_002
+    4300006: Dr_Bloq
+    4300008: Camera_2
+    4300010: Film_Reel_001
+    4300012: Camera_Mount_001
+    4300014: Chair_3
+    4300016: Chair_2
+    4300018: Chair_1
+    4300020: TV
+    4300022: TV_Base
+    4300024: TV_Logo
+    4300026: TV_Screen
+    4300028: Stage_Base
+    4300030: Floor
+    4300032: Backing
+    4300034: Text
+    4300036: Camera_1
+    4300038: Camera_Mount
+    4300040: Film_Reel
+    7400000: Default Take
+    9500000: //RootNode
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
