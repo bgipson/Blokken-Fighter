@@ -37,6 +37,7 @@ public class EnemyAI : MonoBehaviour {
 	void Update () {
         Debug.DrawLine(AI.position, AI.position + new Vector3(7, 0));
         Debug.DrawLine(AI.position, AI.position - new Vector3(7, 0));
+        if (animator.GetBool("Dead")) this.enabled = false;
 
         if (Math.Abs(AI.position.x - player.position.x) > 7.0f)
         {
@@ -98,7 +99,7 @@ public class EnemyAI : MonoBehaviour {
                 animator.SetBool("Duck", true);
             }
             //int dodgeRng = UnityEngine.Random.Range(0, 15);
-            if (Input.GetKey(KeyCode.Z) && dodgeRng <= 5) {
+            if (Input.GetButton("Attack_1P") && dodgeRng <= 5) {
                 animator.SetBool("Dodge", true);
                 //Debug.Log(dodgeRng);
                 dodgeRng = 6;
@@ -118,7 +119,9 @@ public class EnemyAI : MonoBehaviour {
     private void block()
     {
         //Debug.Log("Block");
-        animator.SetBool("Guard", true);
+        if (!control.getGuardBreak()) {
+            animator.SetBool("Guard", true);
+        }
         canAttack = true;
     }
 }

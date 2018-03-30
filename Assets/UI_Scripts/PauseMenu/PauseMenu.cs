@@ -9,27 +9,41 @@ public class PauseMenu : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         animator = GetComponent<Animator>();
-	}
+        if (eventSystem == null) {
+            eventSystem = FindObjectOfType<EventSystem>();
+        }
+        eventSystem.SetSelectedGameObject(resumeMatch);
+    }
 	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetButtonDown("Start_1P")) {
-            animator.SetTrigger("Start");
+            animator.SetBool("Start", !animator.GetBool("Start"));
+            eventSystem.SetSelectedGameObject(resumeMatch);
         }
+
+        if (Input.GetButton("Select_1P")) {
+            print(eventSystem.currentSelectedGameObject);
+        }
+
+
 	}
 
     public void resume() {
-        animator.SetTrigger("Start");
+        animator.SetBool("Start", false);
+        Time.timeScale = 1f;
     }
 
     public void returnToTitle() {
-        animator.SetTrigger("Start");
+        animator.SetBool("Start", false);
+        Time.timeScale = 1f;
         SceneManager.LoadScene(0);
     }
 
     public void restartMatch() {
         setEvent(resumeMatch);
-        animator.SetTrigger("Start");
+        animator.SetBool("Start", false);
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         RoundManager.player1Wins = 0;
         RoundManager.player2Wins = 0;
