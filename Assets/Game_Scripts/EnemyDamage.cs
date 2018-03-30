@@ -12,6 +12,8 @@ public class EnemyDamage : MonoBehaviour {
     Animator animator;
 
     public bool debugLaunch = false;
+
+    public bool training = false;
     
 
 	// Use this for initialization
@@ -89,6 +91,11 @@ public class EnemyDamage : MonoBehaviour {
                         if (hitbox.getLaunch().y < 25) {
                             animator.SetBool("Damage", true);
                         } else {
+                            if (hitbox.getLaunch().y > 30 && Random.Range(0f, 1f) < 0.75f) {
+                                animator.SetBool("Spin_Damage", true);
+                            } else if (hitbox.getLaunch().y > 12 && hitbox.getLaunch().x > 15 && Random.Range(0f, 1f) < 0.5f) {
+                                animator.SetBool("Spin_Damage", true);
+                            }
                             animator.SetBool("AirDamage", true);
                         }
                     }
@@ -97,24 +104,41 @@ public class EnemyDamage : MonoBehaviour {
 
                     //Knockback
                     if (!animator.GetBool("Guard")) rig.velocity = new Vector3(hitbox.getLaunch().x * dirConstant, hitbox.getLaunch().y, rig.velocity.z);
-                    else rig.velocity = new Vector3((hitbox.getLaunch().x / 2) * dirConstant, hitbox.getLaunch().y / 2, rig.velocity.z);
+                    else rig.velocity = new Vector3(Mathf.Clamp((hitbox.getLaunch().x / 2), 10, 40) * dirConstant, hitbox.getLaunch().y / 2, rig.velocity.z);
 
                     if (debugLaunch) {
                         print("Launch:" + hitbox.getLaunch());
                     }
                     //Hit Effects
                     Instantiate(hitfx, collider.ClosestPointOnBounds(transform.position), Quaternion.identity);
-                    camFuncs.shake(0.1f, 0.08f);
+                    camFuncs.shake(0.1f, 0.08f + (Mathf.Abs(Vector3.Magnitude(hitbox.getLaunch())) * 0.0025f ) );
                 }
                 if (manager && manager.hitFreeze) {
                     hitFreeze();
                 }
+
                 if (!animator.GetBool("Guard")) {
-                    controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 5), 0, 100);
+                    if (!training) {
+                        controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 5), 0, 100);
+                    } else {
+                        controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 5), 1, 100);
+                    }
                     incComboCounter();
                 } else {
-                    controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 15), 0, 100);
-                } 
+                    if (!training) {
+                        controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 25), 0, 100);
+                    } else {
+                        controller.health = Mathf.Clamp(controller.health - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 25), 0, 100);
+                    }
+                    controller.guardMeter = Mathf.Clamp(controller.guardMeter - (Mathf.RoundToInt(hitbox.getLaunch().magnitude) / 2), 0, 100);
+                }
+
+                if (playerID == 1) {
+                    RoundManager.hits_taken_p1 += 1;
+                }
+                if (playerID == 2) {
+                    RoundManager.hits_taken_p2 += 1;
+                }
             }
         }
     }
@@ -160,11 +184,25 @@ public class EnemyDamage : MonoBehaviour {
 
     public void comboTimeout() {
         if (!animator.GetComponent("Air") && comboTimer > timeout) {
+            if (playerID == 1) {
+                RoundManager.max_p2_combo = Mathf.Max(comboCounter, RoundManager.max_p2_combo);
+                RoundManager.total_p2_combos += comboCounter;
+            }
+
+            if (playerID == 2) {
+                RoundManager.max_p1_combo = Mathf.Max(comboCounter, RoundManager.max_p1_combo);
+                RoundManager.total_p1_combos += comboCounter;
+            }
+
             comboCounter = 0;
             comboTimer = 0;
 
             if (manager) {
                 manager.endCombo(playerID);
+            }
+
+            if (training) {
+                controller.health = 100;
             }
             //print("COMBO TIMED OUT");
         }
@@ -176,7 +214,7 @@ public class EnemyDamage : MonoBehaviour {
 
     IEnumerator wait() {
         Time.timeScale = 0.1f;
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.006f);
         Time.timeScale = 1;
     }
 

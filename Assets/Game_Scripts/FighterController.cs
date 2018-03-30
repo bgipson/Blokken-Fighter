@@ -5,6 +5,7 @@ using UnityEngine;
 public class FighterController : MonoBehaviour {
 
     public int health = 100;
+    public float guardMeter = 100;
     public GameObject deathRagdoll;
 
     Animator animator;
@@ -23,11 +24,13 @@ public class FighterController : MonoBehaviour {
     public int jab_1_num = 0; //The first jab in the three hit combo
     public int jab_2_num = 0; //The second jab in the three hit combo
     public int jab_3_num = 0; //The third jab in the three hit combo
-    public int up_air_num = 0;  
+    public int up_tilt_num = 0; //The Uppercut (Up-Arrow + Attack)
+    public int up_air_num = 0; 
+    public int down_air_num = 0; 
 
     public bool controllable = true;      //If deactivated, then fighting controls are disabled for the player
 
-
+    bool guardBreak;
 
     // Use this for initialization
     void Start() {
@@ -39,31 +42,57 @@ public class FighterController : MonoBehaviour {
         animator.SetInteger("Jab_2_Num", jab_2_num);
         animator.SetInteger("Jab_3_Num", jab_3_num);
         animator.SetInteger("Up_Air_Num", up_air_num);
+        animator.SetInteger("Down_Air_Num", down_air_num);
+        animator.SetInteger("Up_Tilt_Num", up_tilt_num);
     }
+
+
+    public Animator getAnimator() {
+        return animator;
+    }
+
+    Vector3 tempPos;
+    bool tempMoveable = false;
 
     // Update is called once per frame
     void Update() {
         //DEBUG CONTROLS - REMOVE FROM FULL VERSION
         #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.P)) {
+        if (Input.GetKeyDown(KeyCode.F4)) {
             if (playerID == 2) {
-                animator.SetBool("Attack", true);
+                health = 0;
             }
         }
         #endif
 
         dirConstant = Mathf.Sign(transform.position.x - target.transform.position.x);
 
+        if (animator.GetBool("Moveable") != tempMoveable) {
+            tempPos = target.transform.position;
+            tempMoveable = animator.GetBool("Moveable");
+        }
 
         //Rotates Self based on position to target.
         //Greater than
         if (animator.GetBool("Moveable")) {
-            if (transform.position.x - target.transform.position.x > 0) {
-                Vector3 eulers = transform.rotation.eulerAngles;
+            Vector3 eulers = transform.rotation.eulerAngles;
+            float angle1 = Vector3.Angle(new Vector3(0, eulers.y, 0), Vector3.zero);
+            float angle2 = Vector3.Angle(new Vector3(0, eulers.y, 0), new Vector3(0, 180, 0));
+
+            if (transform.position.x - target.transform.position.x > 0) {      
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulers.x, 180, eulers.z), 0.1f);
             } else {
-                Vector3 eulers = transform.rotation.eulerAngles;
                 transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulers.x, 0, eulers.z), 0.1f);
+            }
+        } else {
+            Vector3 eulers = transform.rotation.eulerAngles;
+            float angle1 = Mathf.Abs(Vector3.Angle(new Vector3(0, Mathf.Abs(eulers.y), 0), Vector3.zero));
+            float angle2 = Mathf.Abs(Vector3.Angle(new Vector3(0, Mathf.Abs(eulers.y), 0), new Vector3(0, 180, 0)));
+
+            if (transform.position.x - tempPos.x > 0) {
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulers.x, 180, eulers.z), 0.2f);
+            } else {
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(eulers.x, 0, eulers.z), 0.2f);
             }
         }
 
@@ -71,7 +100,7 @@ public class FighterController : MonoBehaviour {
         RaycastHit hit;
         bool under = Physics.Raycast(raycastPoint.transform.position, Vector3.down, out hit, 0.8f, 1 << 8);
         Debug.DrawLine(raycastPoint.transform.position, raycastPoint.transform.position + (Vector3.down * 1.5f));
-        animator.SetBool("Grounded", under && hit.collider.gameObject.tag == "Ground");
+        animator.SetBool("Grounded", under && hit.collider.gameObject.tag == "Ground" && rig.velocity.y < 10);
         if (animator.GetBool("Air") && animator.GetBool("Grounded") && Mathf.Abs(rig.velocity.y) > 30) {
             //animator.SetBool("Grounded", false);
             //print("BOUNCE");
@@ -89,6 +118,32 @@ public class FighterController : MonoBehaviour {
             keyCheck();
         }
 
+        if (!guardBreak && !animator.GetBool("Guard")) guardMeter += 0.1f * Time.timeScale;
+        if (!guardBreak && guardMeter <= 0) {
+            guardBreak = true;
+        }
+
+        if (guardBreak) {
+            animator.SetBool("Guard", false);
+            guardMeter += 0.15f * Time.timeScale;
+        }
+        if (guardBreak && guardMeter >= 100) {
+            guardMeter = 100;
+            guardBreak = false;
+        }
+        if (guardMeter > 100) {
+            guardMeter = 100;
+        }
+        if (guardMeter < 0) {
+            guardMeter = 0;
+        }
+
+
+        if (animator.GetBool("Moveable") || animator.GetBool("DamageCheck")) gravitation = false;
+    }
+
+    public bool getGuardBreak() {
+        return guardBreak;
     }
 
     void keyCheck() {
@@ -98,12 +153,31 @@ public class FighterController : MonoBehaviour {
             animator.SetBool("Attack", true);
         }
 
-        if (Input.GetKeyDown(KeyCode.C)) {
-            animator.SetBool("Dodge", true);
+        if (!guardBreak) {
+            if ((p1 && Input.GetButtonDown("Dodge_Right_1P")) || (p2 && Input.GetButtonDown("Dodge_Right_2P"))) {
+                animator.SetBool("Dodge", true);
+                dodgeConstant = 1;
+                if (dirConstant == 1) {
+                    animator.SetBool("Back", true);
+                } else {
+                    animator.SetBool("Back", false);
+                }
+            }
+
+            if ((p1 && Input.GetButtonDown("Dodge_Left_1P")) || (p2 && Input.GetButtonDown("Dodge_Left_2P"))) {
+                animator.SetBool("Dodge", true);
+                dodgeConstant = -1;
+
+                if (dirConstant == -1) {
+                    animator.SetBool("Back", true);
+                } else {
+                    animator.SetBool("Back", false);
+                }
+            }
         }
 
         //For Up Attacks
-        animator.SetBool("Up", (p1 && Input.GetKey(KeyCode.UpArrow)) || (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
+        animator.SetBool("Up",  (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
 
         //For Guarding
         animator.SetBool("Guard", (p1 && Input.GetButton("Guard_1P")) || (p2 && Input.GetButton("Guard_2P")));
@@ -137,6 +211,7 @@ public class FighterController : MonoBehaviour {
 
         if ((p1 && Input.GetButtonDown("Jump_1P") || (p2 && Input.GetButtonDown("Jump_2P"))) && animator.GetBool("Moveable") && animator.GetBool("Grounded")) {
             animator.SetBool("Jump", true);
+            animator.SetBool("DamageCheck", false);
             rig.velocity = new Vector3(rig.velocity.x, jumpHeight, rig.velocity.z);
         }
     }
@@ -187,12 +262,16 @@ public class FighterController : MonoBehaviour {
         }
     }
 
+    int dodgeConstant = 1;
     public void dodge() {
-        rig.velocity = new Vector3(-dirConstant * 40, rig.velocity.y, rig.velocity.z);
+
+        rig.velocity = new Vector3(dodgeConstant * 50, rig.velocity.y, rig.velocity.z);
+        guardMeter -= 10;
     }
 
     public void airDodge() {
-        rig.velocity = new Vector3(-dirConstant * 25, 15, rig.velocity.z);
+        rig.velocity = new Vector3(dodgeConstant * 25, 15, rig.velocity.z);
+        guardMeter -= 10;
     }
 
     public void reverseRotation() {
@@ -252,13 +331,71 @@ public class FighterController : MonoBehaviour {
 
     //Kick Style Moves
     public void kicker_up_kick() {
-        rig.velocity = new Vector3(rig.velocity.x, 16, 0);
+        rig.velocity = new Vector3(0, 16, 0);
     }
     
     public void kick_jab_2() {
         rig.velocity = new Vector3(-dirConstant * 20, 5, 0);
     }
 
+    float skidDir = 1;
+    public void kick_down_aerial(int i) {
+        skidDir = dirConstant;
+        if (i == 0) {
+            rig.velocity = new Vector3(dirConstant * 20, 20);
+        } else {
+            rig.velocity = new Vector3(-dirConstant * 60, -40);
+        }
+    }
+
+    public void kick_down_landing() {
+        rig.velocity = new Vector3(-skidDir * 50, 0);
+    }
+
+    public void kick_up_tilt(int i) {
+        if (i == 0) {
+            skidDir = dirConstant;
+        } else if (i == 1 && (animator.GetBool("Jump") == false)) {
+            rig.velocity = new Vector3(skidDir * 25, rig.velocity.y);
+        } else if (i == 2) {
+            animator.SetBool("Moveable", true);
+            animator.SetBool("DamageCheck", true);
+        } else if (i == 3) {
+            animator.SetBool("Moveable", false);
+            animator.SetBool("DamageCheck", false);
+        } else if (animator.GetBool("Jump") == false) {
+            rig.velocity = new Vector3(skidDir * 20, rig.velocity.y, 0);
+        }
+    }
+
+    public void berserker_up_tilt(int i) {
+        if (i == 0) {
+            rig.velocity = new Vector3(-dirConstant * 50, 90, 0);
+
+        } if (i == 1) {
+            rig.velocity = new Vector3(dirConstant * 5, 10, 0);
+        }
+
+        if (i == 2) {
+            rig.velocity = new Vector3(-Mathf.Sign(rig.velocity.x) * 5, 0, 0);
+        }
+    }
+
+    public void berserker_up_aerial(int i) {
+        if (i == 0) {
+            rig.velocity = new Vector3(0, 10, 0);
+        } else if (i == 1) {
+            rig.velocity = new Vector3(0, 20, 0);
+        }
+    }
+
+    public void shoulderPush(int i) {
+        if (i == 0) {
+            rig.velocity = new Vector3(-dirConstant * 55, 0);
+        } else {
+            rig.velocity = new Vector3(0, 0);
+        }
+    }
 
     public int getComboCounter() {
         return playerHitbox.comboCounter;
@@ -267,4 +404,6 @@ public class FighterController : MonoBehaviour {
     public float getDirConstant() {
         return dirConstant;
     }
+
+    
 }
