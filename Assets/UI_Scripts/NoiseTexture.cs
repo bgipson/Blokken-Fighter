@@ -5,26 +5,28 @@ using UnityEngine.UI;
 
 public class NoiseTexture : MonoBehaviour {
 
-    private Texture texture;
+    private Texture2D texture;
     private RawImage image;
     public int textureSize = 64;
 
 	// Use this for initialization
 	void Start () {
         image = GetComponent<RawImage>();
-        texture = MakeNoiseTexture();
+        texture = new Texture2D(textureSize, textureSize);
+        MakeNoiseTexture();
         image.texture = texture;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        texture = MakeNoiseTexture();
+        //texture = MakeNoiseTexture();
+        MakeNoiseTexture();
         image.texture = texture;
 	}
 
-    Texture MakeNoiseTexture()
+    void MakeNoiseTexture()
     {
-        Texture2D noise = new Texture2D(textureSize, textureSize);
+        //Texture2D noise = new Texture2D(textureSize, textureSize);
         float rand = Random.value;
         for (int x = 0; x < textureSize; x++)
         {
@@ -35,11 +37,11 @@ public class NoiseTexture : MonoBehaviour {
                         (x * 50f + rand * 5000f) / (float) textureSize,
                         (y * 100f + rand * 200f) / (float) textureSize / 50f
                         )));
-                noise.SetPixel(x, y, c);
+                texture.SetPixel(x, y, c);
             }
         }
 
-        noise.Apply();
-        return noise;
+        texture.Apply();
+        //return noise;
     }
 }
