@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameSettings {
 
     public float volume;
+    public bool fullscreen;
 
 	// Use this for initialization
 	void Start () {
