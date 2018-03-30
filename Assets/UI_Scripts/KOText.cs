@@ -41,7 +41,7 @@ public class KOText : MonoBehaviour {
 
     //Shows the KO Text
     public void display() {
-        animator.SetTrigger("Appear");
+        animator.SetTrigger("Appear");        
         //print("TIME SCALE SLOWED");
         if (Random.value < 0) {
             Time.timeScale = 0.5f;
@@ -59,6 +59,22 @@ public class KOText : MonoBehaviour {
     //Change this behaviour depending on if this is first round/second round/tie-breaker
     IEnumerator endRound(float waitTime) {
         yield return new WaitForSeconds(waitTime);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (RoundManager.player1Wins == 2 || RoundManager.player2Wins == 2) {
+            if (RoundManager.player1Wins == 2) {
+                RoundManager.currentWinnerPlayer = 1;
+                RoundManager.total_p1_wins += 1;
+            } else if (RoundManager.player2Wins == 2) {
+                RoundManager.currentWinnerPlayer = 2;
+                RoundManager.total_p2_wins += 1;
+            }
+            yield return new WaitForEndOfFrame();
+            RoundManager.setScreen();
+            Time.timeScale = 1f;
+            SceneManager.LoadScene("Results");
+            
+        } else {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        
     }
 }

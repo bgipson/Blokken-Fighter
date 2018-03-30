@@ -21,8 +21,15 @@ public class GameManager : MonoBehaviour {
     OutlineText combo2Text;
     KOText koText;
 
-	// Use this for initialization
-	void Start () {
+    public Image player1Win_1;
+    public Image player1Win_2;
+    public Image player2Win_1;
+    public Image player2Win_2;
+
+    public bool trainingMode = false;
+
+    // Use this for initialization
+    void Start () {
         startTimer();
         FighterController[] fighters = FindObjectsOfType<FighterController>();
         player1 = fighters[0];
@@ -31,6 +38,30 @@ public class GameManager : MonoBehaviour {
             player1 = fighters[1];
             player2 = fighters[0];
         }
+
+        if (RoundManager.player1Wins == 1) {
+            player1Win_1.fillAmount = 1;
+            player1Win_2.fillAmount = 0;
+        } else if (RoundManager.player1Wins == 0) {
+            player1Win_1.fillAmount = 0;
+            player1Win_2.fillAmount = 0;
+        } else {
+            player1Win_1.fillAmount = 0;
+            player1Win_2.fillAmount = 0;
+        }
+
+        if (RoundManager.player2Wins == 1) {
+            player2Win_1.fillAmount = 1;
+            player2Win_2.fillAmount = 0;
+        } else if (RoundManager.player2Wins == 0) {
+            player2Win_1.fillAmount = 0;
+            player2Win_2.fillAmount = 0;
+        } else {
+            player2Win_1.fillAmount = 0;
+            player2Win_2.fillAmount = 0;
+        }
+
+
 
         combo1Text = combo1Animator.gameObject.GetComponentInChildren<OutlineText>();
         combo2Text = combo2Animator.gameObject.GetComponentInChildren<OutlineText>();
@@ -41,18 +72,21 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //Handles the match timer
-        int time = Mathf.RoundToInt(timer);
-        if (time <= 0 && matchStarted) {
-            time = 0;
-            timerStarted = false;
-            timerText.mainText.text = 0.ToString();
-            koText.switchGraphic();
-            koText.display();
-            matchStarted = false;
-        } else {
-            timerText.mainText.text = Mathf.RoundToInt(timer).ToString();
-            if (timerStarted) {
-                timer = timer - (Time.deltaTime);
+
+        if (!trainingMode) {
+            int time = Mathf.RoundToInt(timer);
+            if (time <= 0 && matchStarted) {
+                time = 0;
+                timerStarted = false;
+                timerText.mainText.text = 0.ToString();
+                koText.switchGraphic();
+                koText.display();
+                matchStarted = false;
+            } else {
+                timerText.mainText.text = Mathf.RoundToInt(timer).ToString();
+                if (timerStarted) {
+                    timer = timer - (Time.deltaTime);
+                }
             }
         }
 
@@ -61,7 +95,30 @@ public class GameManager : MonoBehaviour {
         if (matchStarted && (player1.health <= 0 || player2.health <= 0)) {
             koText.display();
             matchStarted = false;
+            if (player1.health <= 0) {
+                RoundManager.player2Wins += 1;
+            }
+            if (player2.health <= 0) {
+                RoundManager.player1Wins += 1;
+            }
             print("MATCH ENDED");
+
+
+            if (RoundManager.player1Wins == 1) {
+                player1Win_1.fillAmount = 1;
+                player1Win_2.fillAmount = 0;
+            } else if (RoundManager.player1Wins == 2) {
+                player1Win_1.fillAmount = 1;
+                player1Win_2.fillAmount = 1;
+            }
+
+            if (RoundManager.player2Wins == 1) {
+                player2Win_1.fillAmount = 1;
+                player2Win_2.fillAmount = 0;
+            } else if (RoundManager.player2Wins == 1) {
+                player2Win_1.fillAmount = 1;
+                player2Win_2.fillAmount = 1;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.R)) {
