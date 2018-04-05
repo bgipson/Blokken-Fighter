@@ -13,6 +13,9 @@ public class AnimatorInterface : MonoBehaviour
 
     public void SetSelected(bool selected)
     {
-        animator.SetBool("Selected", selected);
+        if (animator)
+        {
+            animator.SetBool("Selected", selected);
+        }
     }
 }

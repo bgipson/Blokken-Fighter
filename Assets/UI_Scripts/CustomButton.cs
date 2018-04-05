@@ -11,17 +11,20 @@ public class CustomButton : MonoBehaviour {
     public CustomButton selectUp;
     public CustomButton selectDown;
     public SelectionChangedEvent selectionChanged;
-    public UnityEvent onActivate;
 
-	void Start ()
-    {
-        selectionChanged = new SelectionChangedEvent();
-        onActivate = new UnityEvent();
-	}
+    [System.Serializable]
+    public class ActivatedEvent : UnityEvent { };
+    public ActivatedEvent onActivate;
 
-    void Activate()
+    public void Activate()
     {
         onActivate.Invoke();
+    }
+
+    public void Deselect()
+    {
+        selectionChanged.Invoke(false);
+        GetComponent<AnimatorInterface>().SetSelected(false);
     }
 
     public void Select()

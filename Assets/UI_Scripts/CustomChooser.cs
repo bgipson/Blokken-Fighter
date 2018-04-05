@@ -11,23 +11,28 @@ public class CustomChooser : CustomButton
 
     public ChoiceChangedEvent choiceChanged;
 
-    public string prompt;
     public string[] choices;
     public int currentChoice;
     private Text textbox;
     private Animator animator;
+    private GameObject arrow;
 
     private void Start()
     {
-        choiceChanged = new ChoiceChangedEvent();
         currentChoice = 0;
-        textbox = GetComponentInChildren<Text>();
+        textbox = transform.Find("Choice").GetComponent<Text>();
         animator = GetComponent<Animator>();
+        arrow = transform.Find("Arrow").gameObject;
     }
 
-    private void ChoiceChanged(string choice)
+    public void ShowArrow(bool show)
     {
-        textbox.text = prompt + ": <" + choice + ">";
+        arrow.SetActive(show);
+    }
+
+    public void ChoiceChanged(string choice)
+    {
+        textbox.text = choice;
         choiceChanged.Invoke(choice);
         animator.SetTrigger("Changed");
     }
