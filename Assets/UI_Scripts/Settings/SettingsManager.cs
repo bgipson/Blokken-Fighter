@@ -8,7 +8,7 @@ public class SettingsManager : MonoBehaviour {
 
     public Slider volumeSlider;
     //public Toggle fullscreenToggle;
-    public Dropdown fullscreenOption;
+    public Slider screen;
     public AudioSource BGM;
     public GameSettings gameSettings;
     public Button applyButton;
@@ -18,22 +18,25 @@ public class SettingsManager : MonoBehaviour {
     {
         gameSettings = new GameSettings();
         volumeSlider.onValueChanged.AddListener(delegate { OnVolumeChange(); });
-        fullscreenOption.onValueChanged.AddListener(delegate { OnFullscreenToggle(); });
+        screen.onValueChanged.AddListener(delegate { OnFullscreenToggle(); });
 
         applyButton.onClick.AddListener(delegate { OnApplyButtonClicked(); });
     }
 
     public void OnFullscreenToggle()
     {
-        if (fullscreenOption.value == 0) { Screen.fullScreen = true; }
+        if (screen.value == 0) {
+            Screen.fullScreen = true;
+
+        }
         else { Screen.fullScreen = false; }
         gameSettings.fullscreen = Screen.fullScreen;
     }
 
     public void OnVolumeChange()
     {
-        BGM.volume = volumeSlider.value;
-        gameSettings.volume = volumeSlider.value;
+        BGM.volume = volumeSlider.value / 0.2f;
+        gameSettings.volume = volumeSlider.value / 0.2f;
     }
 
     public void OnApplyButtonClicked()
