@@ -10,6 +10,15 @@ public class ResultsManager : MonoBehaviour {
 	void Start () {
         animator = GetComponent<Animator>();
         animator.SetInteger("WinningPlayer", RoundManager.currentWinnerPlayer);
+
+        FighterSetup[] setups = FindObjectsOfType<FighterSetup>();
+        if (setups.Length > 0)
+        {
+            foreach (FighterSetup setup in setups)
+            {
+                Destroy(setup.gameObject);
+            }
+        }
     }
 
     public bool done = false;
