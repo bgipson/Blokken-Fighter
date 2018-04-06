@@ -10,12 +10,34 @@ public class ResultsManager : MonoBehaviour {
 	void Start () {
         animator = GetComponent<Animator>();
         animator.SetInteger("WinningPlayer", RoundManager.currentWinnerPlayer);
+
+        FighterSetup[] setups = FindObjectsOfType<FighterSetup>();
+        if (setups.Length > 0)
+        {
+            foreach (FighterSetup setup in setups)
+            {
+                Destroy(setup.gameObject);
+            }
+        }
     }
 
     public bool done = false;
 
     public void finished() {
         done = true;
+    }
+
+    public FighterController player1;
+    public FighterController player2;
+    public void setWin() {
+        if (RoundManager.currentWinnerPlayer == 1) {
+            player1.gameObject.GetComponent<Animator>().SetTrigger("Win");
+            player2.gameObject.GetComponent<Animator>().SetTrigger("Lose");
+        } else {
+            player2.gameObject.GetComponent<Animator>().SetTrigger("Win");
+            player1.gameObject.GetComponent<Animator>().SetTrigger("Lose");
+        }
+        
     }
 
 	// Update is called once per frame

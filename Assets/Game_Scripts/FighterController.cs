@@ -38,14 +38,40 @@ public class FighterController : MonoBehaviour {
         rig = GetComponent<Rigidbody>();
         playerHitbox = GetComponent<EnemyDamage>();
 
-        animator.SetInteger("Jab_1_Num", jab_1_num);
-        animator.SetInteger("Jab_2_Num", jab_2_num);
-        animator.SetInteger("Jab_3_Num", jab_3_num);
-        animator.SetInteger("Up_Air_Num", up_air_num);
-        animator.SetInteger("Down_Air_Num", down_air_num);
-        animator.SetInteger("Up_Tilt_Num", up_tilt_num);
+        bool initialized = false;
+        FighterSetup[] setups = FindObjectsOfType<FighterSetup>();
+        if (setups.Length > 0)
+        {
+            foreach (FighterSetup setup in setups)
+            {
+                if ((playerID == 1 && setup.name == "Player1") || (playerID == 2 && setup.name == "Player2"))
+                {
+                    InitializeFromSetup(setup);
+                    initialized = true;
+                }
+            }
+        }
+
+        if (!initialized)
+        {
+            Debug.Log("No setup for Player " + playerID + ". Using public variables.");
+            animator.SetInteger("Jab_1_Num", jab_1_num);
+            animator.SetInteger("Jab_2_Num", jab_2_num);
+            animator.SetInteger("Jab_3_Num", jab_3_num);
+            animator.SetInteger("Up_Air_Num", up_air_num);
+            animator.SetInteger("Down_Air_Num", down_air_num);
+            animator.SetInteger("Up_Tilt_Num", up_tilt_num);
+        }
     }
 
+    private void InitializeFromSetup(FighterSetup setup)
+    {
+        Debug.Log("Loaded setup for Player " + playerID);
+        foreach (string key in setup.setup.Keys)
+        {
+            animator.SetInteger(key, setup.setup[key]);
+        }
+    }
 
     public Animator getAnimator() {
         return animator;
@@ -53,6 +79,10 @@ public class FighterController : MonoBehaviour {
 
     Vector3 tempPos;
     bool tempMoveable = false;
+
+    public void reorient() {
+        tempPos = target.transform.position;
+    }
 
     // Update is called once per frame
     void Update() {
