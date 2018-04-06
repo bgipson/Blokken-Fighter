@@ -6,7 +6,7 @@ public static class RoundManager {
     public static int player1Wins = 0;
     public static int player2Wins = 0;
 
-    public static int currentWinnerPlayer = 0; //The Player that won the last match
+    public static int currentWinnerPlayer = 1; //The Player that won the last match
 
     public static int total_p1_wins = 0;
     public static int total_p2_wins = 0;

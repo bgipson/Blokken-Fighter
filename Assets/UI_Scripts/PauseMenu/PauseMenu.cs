@@ -22,11 +22,6 @@ public class PauseMenu : MonoBehaviour {
             eventSystem.SetSelectedGameObject(resumeMatch);
         }
 
-        if (Input.GetButton("Select_1P")) {
-            print(eventSystem.currentSelectedGameObject);
-        }
-
-
 	}
 
     public void resume() {
