@@ -17,7 +17,7 @@ public class CustomChooser : CustomButton
     private Animator animator;
     private GameObject arrow;
 
-    private void Start()
+    private void Awake()
     {
         currentChoice = 0;
         textbox = transform.Find("Choice").GetComponent<Text>();
