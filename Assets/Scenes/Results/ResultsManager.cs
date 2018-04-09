@@ -27,6 +27,19 @@ public class ResultsManager : MonoBehaviour {
         done = true;
     }
 
+    public FighterController player1;
+    public FighterController player2;
+    public void setWin() {
+        if (RoundManager.currentWinnerPlayer == 1) {
+            player1.gameObject.GetComponent<Animator>().SetTrigger("Win");
+            player2.gameObject.GetComponent<Animator>().SetTrigger("Lose");
+        } else {
+            player2.gameObject.GetComponent<Animator>().SetTrigger("Win");
+            player1.gameObject.GetComponent<Animator>().SetTrigger("Lose");
+        }
+        
+    }
+
 	// Update is called once per frame
 	void Update () {
 		if (done && Input.anyKeyDown) {

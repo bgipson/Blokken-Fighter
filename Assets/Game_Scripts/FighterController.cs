@@ -80,6 +80,10 @@ public class FighterController : MonoBehaviour {
     Vector3 tempPos;
     bool tempMoveable = false;
 
+    public void reorient() {
+        tempPos = target.transform.position;
+    }
+
     // Update is called once per frame
     void Update() {
         //DEBUG CONTROLS - REMOVE FROM FULL VERSION

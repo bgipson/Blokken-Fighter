@@ -6,8 +6,8 @@ public class Reorient : StateMachineBehaviour {
 
     // OnStateEnter is called before OnStateEnter is called on any state inside this state machine
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        //animator.gameObject.GetComponent<FighterController>().setOrient(true);
-	}
+        animator.gameObject.GetComponent<FighterController>().reorient();
+    }
 
 	// OnStateUpdate is called before OnStateUpdate is called on any state inside this state machine
 	//override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -16,7 +16,7 @@ public class Reorient : StateMachineBehaviour {
 
 	// OnStateExit is called before OnStateExit is called on any state inside this state machine
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        //animator.gameObject.GetComponent<FighterController>().setOrient(false);
+        //animator.gameObject.GetComponent<FighterController>().reorient();
     }
 
 	// OnStateMove is called before OnStateMove is called on any state inside this state machine
