@@ -33,7 +33,7 @@ public class CharacterSelectScreen : MonoBehaviour
 
         if (player1Ready)// && player2Ready)
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene("StageSelect");
         }
     }
 }
