@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class CharacterSelectScreen : MonoBehaviour
 {
     public bool player1Ready;
-    //public bool player2Ready;
+    public bool player2Ready;
 
     public void Start()
     {
@@ -28,12 +28,12 @@ public class CharacterSelectScreen : MonoBehaviour
         }
         else
         {
-            //player2Ready = true;
+            player2Ready = true;
         }
 
-        if (player1Ready)// && player2Ready)
+        if (player1Ready && player2Ready)
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(2);
         }
     }
 }
