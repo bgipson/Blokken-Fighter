@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Video;
 public class stageSelect : MonoBehaviour {
     public int stageNum = 0;
     public int[] stageLevels;
     public string[] stageNames;
     public GameObject[] stages;
+    public VideoPlayer[] videos;
 
     public OutlineText stageSelectText;
 	// Use this for initialization
 	void Start () {
-		
+        videos[stageNum].Play();
 	}
 
     // Update is called once per frame
@@ -22,12 +23,16 @@ public class stageSelect : MonoBehaviour {
 	void Update () {
         if (released && Input.GetAxis("Horizontal_1P") > 0.3f) {
             if (stageNum + 1 < stages.Length) {
+                videos[stageNum].Stop();
                 stageNum += 1;
+                videos[stageNum].Play();
             }
             released = false;
         } else if (released && Input.GetAxis("Horizontal_1P") < -0.3f) {
             if (stageNum - 1 >= 0) {
+                videos[stageNum].Stop();
                 stageNum -= 1;
+                videos[stageNum].Play();
             }
             released = false;
         } else if (Mathf.Abs(Input.GetAxis("Horizontal_1P")) <= 0.3f) {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterSelectManager : MonoBehaviour {
-
+    public int playerNum = 1;
     public CustomButton selectedFirst;
     public GameObject controller;
     public string verticalAxis;
@@ -23,9 +23,14 @@ public class CharacterSelectManager : MonoBehaviour {
 
 	void Start ()
     {
+        if (playerNum == 2) {
+            RoundManager.player2AI = true;
+            selectButton = PlayerInput.jump_2p;
+        }
         selectedFirst.Select();
         currentButton = selectedFirst;
         customizeAnimator = controller.GetComponent<Animator>();
+        customizeAnimator.SetInteger("PlayerNum", playerNum);
         setup = new Dictionary<string, int>();
         SetAllToType("BOXER");
 	}
@@ -181,8 +186,21 @@ public class CharacterSelectManager : MonoBehaviour {
         }
     }
 
+    public void player2_check() {
+        if (playerNum == 2 && !customizeAnimator.GetBool("PlayerStart")) {
+            string[] buttons2p = new string[] { "Start_2P", "Select_2P", "Attack_2P", "Jump_2P", "Guard_2P", "Dodge_Left_2P", "Dodge_Right_2P" };
+            foreach (string button in buttons2p) {
+                if (Input.GetButton(button)) {
+                    customizeAnimator.SetBool("PlayerStart",true);
+                    RoundManager.player2AI = false;
+                }
+            }
+        }
+    }
     private void Update()
     {
+        player2_check();
+
         if (!currentButton)
         {
             return;
@@ -193,12 +211,12 @@ public class CharacterSelectManager : MonoBehaviour {
             currentButton.Activate();
         }
 
-        if (Mathf.Abs(Input.GetAxisRaw(verticalAxis)) < 0.05f)
+        if (Mathf.Abs(Input.GetAxisRaw(verticalAxis)) < 0.3f)
         {
             centeredVertical = true;
         }
 
-        if (Mathf.Abs(Input.GetAxisRaw(horizontalAxis)) < 0.05f)
+        if (Mathf.Abs(Input.GetAxisRaw(horizontalAxis)) < 0.3f)
         {
             centeredHorizontal = true;
         }

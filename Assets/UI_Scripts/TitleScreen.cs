@@ -20,17 +20,50 @@ public class TitleScreen : MonoBehaviour {
             increaseFont(options[0], 60);
             cam.gameObject.transform.position = camPositions[0];
         }
+        if (PlayerPrefs.GetInt("Player1_Controller") == 0) {
+            PlayerInput.changeToXbox(1);
+        } else if (PlayerPrefs.GetInt("Player1_Controller") == 1) {
+            PlayerInput.changeToPS4(1);
+        }
+
+        if (PlayerPrefs.GetInt("Player2_Controller") == 0) {
+            // PlayerInput.changeToXbox(2);
+            PlayerInput.changeToPS4(2);
+        } else if (PlayerPrefs.GetInt("Player2_Controller") == 1) {
+            PlayerInput.changeToPS4(2);
+        }
     }
 
     // Update is called once per frame
     bool shifted = false;
+
+    IEnumerator changeScreen() {
+        yield return new WaitForEndOfFrame();
+        RoundManager.setScreen();
+        SceneManager.LoadScene(levelSelect[i]);
+    }
     void Update() {
+        //if (Input.GetKeyDown(KeyCode.F1)) {
+        //    SceneManager.LoadScene("Beach-Film");
+        //}
+        //if (Input.GetKeyDown(KeyCode.F2)) {
+        //    SceneManager.LoadScene("Highway-Film");
+        //}
+        //if (Input.GetKeyDown(KeyCode.F3)) {
+        //    SceneManager.LoadScene("TV-Film");
+        //}
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            RoundManager.exitGame();
+        }
+
         if (transitioning) {
             changeCam();
         }
 
-        if (Input.GetButtonDown("Jump_1P") || Input.GetButtonDown("Jump_2P") || Input.GetButtonDown("Start_1P")) {
-            SceneManager.LoadScene(levelSelect[i]);
+        if (Input.GetButtonDown("Jump_1P") || Input.GetButtonDown(PlayerInput.jump_2p) || Input.GetButtonDown("Start_1P")) {
+            StartCoroutine(changeScreen());
+           
         }
 
         if (Mathf.Abs(Input.GetAxis("Vertical_1P")) < 0.05f) {

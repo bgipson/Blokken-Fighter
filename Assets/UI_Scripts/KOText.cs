@@ -27,6 +27,17 @@ public class KOText : MonoBehaviour {
 		
 	}
 
+    public void PlayAudio(AudioClip clip) {
+        GameObject a = new GameObject("clip");
+        AudioSource source = a.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.Play();
+
+        TimedDestroy destroyer = a.AddComponent<TimedDestroy>();
+        destroyer.startOnAwake = true;
+        destroyer.time = clip.length;
+    }
+
     //Switches between a ko or a time-out graphic
     public void switchGraphic() {
         if (koGraphic) {

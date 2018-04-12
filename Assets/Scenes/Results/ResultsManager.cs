@@ -27,6 +27,18 @@ public class ResultsManager : MonoBehaviour {
         done = true;
     }
 
+    public void PlayAudio(AudioClip clip) {
+        GameObject a = new GameObject("clip");
+        AudioSource source = a.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.Play();
+
+        TimedDestroy destroyer = a.AddComponent<TimedDestroy>();
+        destroyer.startOnAwake = true;
+        destroyer.time = clip.length;
+    }
+
+
     public FighterController player1;
     public FighterController player2;
     public void setWin() {

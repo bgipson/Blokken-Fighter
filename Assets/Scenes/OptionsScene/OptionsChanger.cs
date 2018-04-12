@@ -11,11 +11,20 @@ public class OptionsChanger : MonoBehaviour {
 
     public AudioSource bgm;
 
-    private Slider[] sliders;
+    public Slider[] sliders;
+    public Slider p1_Input;
+    public Text p1_text;
+    public Slider p2_Input;
+    public Text p2_text;
     private string[] windows = { "WINDOWED", "FULLSCREEN" };
+    private string[] controller = { "XBOX 360", "PS4" };
 	// Use this for initialization
 	void Start () {
-        sliders = GetComponentsInChildren<Slider>();
+        p1_Input.value = PlayerPrefs.GetInt("Player1_Controller");
+        p1_text.text = controller[PlayerPrefs.GetInt("Player1_Controller")];
+
+        p2_Input.value = PlayerPrefs.GetInt("Player2_Controller");
+        p2_text.text = controller[PlayerPrefs.GetInt("Player2_Controller")];
 
         foreach (Slider slider in sliders)
         {
@@ -35,6 +44,42 @@ public class OptionsChanger : MonoBehaviour {
                     break;
         }
             
+        }
+    }
+
+    public void changeInput(Slider s) {
+        if (s.name == "P1_Window") {
+            switch (Mathf.FloorToInt(s.value)) {
+                case 0:
+                    PlayerPrefs.SetInt("Player1_Controller", 0);
+                    p1_text.text = controller[PlayerPrefs.GetInt("Player1_Controller")];
+                    break;
+                case 1:
+                    PlayerPrefs.SetInt("Player1_Controller", 1);
+                    p1_text.text = controller[PlayerPrefs.GetInt("Player1_Controller")];
+                    break;
+                default:
+                    PlayerPrefs.SetInt("Player1_Controller", 0);
+                    p1_text.text = controller[PlayerPrefs.GetInt("Player1_Controller")];
+                    break;
+            }
+        }
+
+        if (s.name == "P2_Window") {
+            switch (Mathf.FloorToInt(s.value)) {
+                case 0:
+                    PlayerPrefs.SetInt("Player2_Controller", 0);
+                    p2_text.text = controller[PlayerPrefs.GetInt("Player2_Controller")];
+                    break;
+                case 1:
+                    PlayerPrefs.SetInt("Player2_Controller", 1);
+                    p2_text.text = controller[PlayerPrefs.GetInt("Player2_Controller")];
+                    break;
+                default:
+                    PlayerPrefs.SetInt("Player2_Controller", 0);
+                    p2_text.text = controller[PlayerPrefs.GetInt("Player2_Controller")];
+                    break;
+            }
         }
     }
 

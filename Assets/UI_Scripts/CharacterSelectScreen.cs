@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class CharacterSelectScreen : MonoBehaviour
 {
     public bool player1Ready;
-    //public bool player2Ready;
+    public bool player2Ready;
 
     public void Start()
     {
@@ -20,6 +20,13 @@ public class CharacterSelectScreen : MonoBehaviour
         }
     }
 
+    public void ReadyOff(string player) {
+        if (player == "Player2") {
+            player2Ready = false;
+        } else {
+            player1Ready = false;
+        }
+    }
     public void ReadyUp(string player)
     {
         if (player == "Player1")
@@ -28,12 +35,19 @@ public class CharacterSelectScreen : MonoBehaviour
         }
         else
         {
-            //player2Ready = true;
+            player2Ready = true;
         }
 
-        if (player1Ready)// && player2Ready)
+        if (player1Ready && (RoundManager.player2AI || player2Ready))
         {
-            SceneManager.LoadScene("StageSelect");
+            StartCoroutine(playersReady(2));
         }
+    }
+
+    IEnumerator playersReady(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        //RoundManager.setScreen();
+        yield return new WaitForEndOfFrame();
+        SceneManager.LoadScene("StageSelect");
     }
 }

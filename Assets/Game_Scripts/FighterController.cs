@@ -94,7 +94,9 @@ public class FighterController : MonoBehaviour {
             }
         }
         #endif
-
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            RoundManager.exitGame();
+        }
         dirConstant = Mathf.Sign(transform.position.x - target.transform.position.x);
 
         if (animator.GetBool("Moveable") != tempMoveable) {
@@ -179,12 +181,12 @@ public class FighterController : MonoBehaviour {
     void keyCheck() {
         bool p1 = (playerID == 1);
         bool p2 = (playerID == 2);
-        if ((p1 && Input.GetButtonDown("Attack_1P")) || (p2 && Input.GetButtonDown("Attack_2P"))) {
+        if ((p1 && Input.GetButtonDown("Attack_1P")) || (p2 && Input.GetButtonDown(PlayerInput.attack_2p))) {
             animator.SetBool("Attack", true);
         }
 
         if (!guardBreak) {
-            if ((p1 && Input.GetButtonDown("Dodge_Right_1P")) || (p2 && Input.GetButtonDown("Dodge_Right_2P"))) {
+            if ((p1 && Input.GetButtonDown(PlayerInput.dodge_right_1p)) || (p2 && Input.GetButtonDown(PlayerInput.dodge_right_2p))) {
                 animator.SetBool("Dodge", true);
                 dodgeConstant = 1;
                 if (dirConstant == 1) {
@@ -194,7 +196,7 @@ public class FighterController : MonoBehaviour {
                 }
             }
 
-            if ((p1 && Input.GetButtonDown("Dodge_Left_1P")) || (p2 && Input.GetButtonDown("Dodge_Left_2P"))) {
+            if ((p1 && Input.GetButtonDown(PlayerInput.dodge_left_1p)) || (p2 && Input.GetButtonDown(PlayerInput.dodge_left_2p))) {
                 animator.SetBool("Dodge", true);
                 dodgeConstant = -1;
 
@@ -210,7 +212,7 @@ public class FighterController : MonoBehaviour {
         animator.SetBool("Up",  (p1 && Input.GetAxis("Vertical_1P") < -0.4f) || (p2 && Input.GetAxis("Vertical_2P") < -0.4f));
 
         //For Guarding
-        animator.SetBool("Guard", (p1 && Input.GetButton("Guard_1P")) || (p2 && Input.GetButton("Guard_2P")));
+        animator.SetBool("Guard", (p1 && Input.GetButton(PlayerInput.guard_1p)) || (p2 && Input.GetButton(PlayerInput.guard_2p)));
 
         //For Sprinting
         animator.SetBool("Sprint", (p1 && Input.GetKey(KeyCode.LeftShift)) || (p1 && Mathf.Abs(Input.GetAxis("Run_1P")) > 0.3f) || (p2 && Mathf.Abs(Input.GetAxis("Run_2P")) > 0.3f));
@@ -239,7 +241,7 @@ public class FighterController : MonoBehaviour {
 
         animator.SetBool("Duck", (p1 && Input.GetKey(KeyCode.DownArrow)) || (p1 && Input.GetAxis("Vertical_1P") > 0.4f) || (p2 && Input.GetAxis("Vertical_2P") > 0.4f));
 
-        if ((p1 && Input.GetButtonDown("Jump_1P") || (p2 && Input.GetButtonDown("Jump_2P"))) && animator.GetBool("Moveable") && animator.GetBool("Grounded")) {
+        if ((p1 && Input.GetButtonDown(PlayerInput.jump_1p) || (p2 && Input.GetButtonDown(PlayerInput.jump_2p))) && animator.GetBool("Moveable") && animator.GetBool("Grounded")) {
             animator.SetBool("Jump", true);
             animator.SetBool("DamageCheck", false);
             rig.velocity = new Vector3(rig.velocity.x, jumpHeight, rig.velocity.z);
@@ -332,10 +334,12 @@ public class FighterController : MonoBehaviour {
      */
 
     public void uppercut() {
+        if (rig)
         rig.velocity = new Vector3(-dirConstant * 5, 25, rig.velocity.z);
     }
 
     public void slide() {
+        if (rig)
         rig.velocity = new Vector3(-dirConstant * 40, rig.velocity.y, rig.velocity.z);
     }
 
@@ -347,83 +351,100 @@ public class FighterController : MonoBehaviour {
     }
 
     public void flipKick() {
+        if (rig)
         rig.velocity = new Vector3(rig.velocity.x / 2, 20, rig.velocity.z);
     }
 
 
     public void downAerialStomp(int i) {
-        if (i == 0) {
-            rig.velocity = new Vector3(0, 4, 0);
-        } else {
-            rig.velocity = new Vector3(0, 20, 0);
+        if (rig) {
+            if (i == 0) {
+                rig.velocity = new Vector3(0, 4, 0);
+            } else {
+                rig.velocity = new Vector3(0, 20, 0);
+            }
         }
     }
 
     //Kick Style Moves
     public void kicker_up_kick() {
+        if (rig)
         rig.velocity = new Vector3(0, 16, 0);
     }
     
     public void kick_jab_2() {
+        if (rig)
         rig.velocity = new Vector3(-dirConstant * 20, 5, 0);
     }
 
     float skidDir = 1;
     public void kick_down_aerial(int i) {
         skidDir = dirConstant;
-        if (i == 0) {
-            rig.velocity = new Vector3(dirConstant * 20, 20);
-        } else {
-            rig.velocity = new Vector3(-dirConstant * 60, -40);
+        if (rig) {
+            if (i == 0) {
+                rig.velocity = new Vector3(dirConstant * 20, 20);
+            } else {
+                rig.velocity = new Vector3(-dirConstant * 60, -40);
+            }
         }
     }
 
     public void kick_down_landing() {
+        if (rig)
         rig.velocity = new Vector3(-skidDir * 50, 0);
     }
 
     public void kick_up_tilt(int i) {
-        if (i == 0) {
-            skidDir = dirConstant;
-        } else if (i == 1 && (animator.GetBool("Jump") == false)) {
-            rig.velocity = new Vector3(skidDir * 25, rig.velocity.y);
-        } else if (i == 2) {
-            animator.SetBool("Moveable", true);
-            animator.SetBool("DamageCheck", true);
-        } else if (i == 3) {
-            animator.SetBool("Moveable", false);
-            animator.SetBool("DamageCheck", false);
-        } else if (animator.GetBool("Jump") == false) {
-            rig.velocity = new Vector3(skidDir * 20, rig.velocity.y, 0);
+        if (rig) {
+            if (i == 0) {
+                skidDir = dirConstant;
+            } else if (i == 1 && (animator.GetBool("Jump") == false)) {
+                rig.velocity = new Vector3(skidDir * 25, rig.velocity.y);
+            } else if (i == 2) {
+                animator.SetBool("Moveable", true);
+                animator.SetBool("DamageCheck", true);
+            } else if (i == 3) {
+                animator.SetBool("Moveable", false);
+                animator.SetBool("DamageCheck", false);
+            } else if (animator.GetBool("Jump") == false) {
+                rig.velocity = new Vector3(skidDir * 20, rig.velocity.y, 0);
+            }
         }
     }
 
     public void berserker_up_tilt(int i) {
-        if (i == 0) {
-            rig.velocity = new Vector3(-dirConstant * 50, 90, 0);
+        if (rig) {
+            if (i == 0) {
+                rig.velocity = new Vector3(-dirConstant * 50, 90, 0);
 
-        } if (i == 1) {
-            rig.velocity = new Vector3(dirConstant * 5, 10, 0);
-        }
+            }
+            if (i == 1) {
+                rig.velocity = new Vector3(dirConstant * 5, 10, 0);
+            }
 
-        if (i == 2) {
-            rig.velocity = new Vector3(-Mathf.Sign(rig.velocity.x) * 5, 0, 0);
+            if (i == 2) {
+                rig.velocity = new Vector3(-Mathf.Sign(rig.velocity.x) * 5, 0, 0);
+            }
         }
     }
 
     public void berserker_up_aerial(int i) {
-        if (i == 0) {
-            rig.velocity = new Vector3(0, 10, 0);
-        } else if (i == 1) {
-            rig.velocity = new Vector3(0, 20, 0);
+        if (rig) {
+            if (i == 0) {
+                rig.velocity = new Vector3(0, 10, 0);
+            } else if (i == 1) {
+                rig.velocity = new Vector3(0, 20, 0);
+            }
         }
     }
 
     public void shoulderPush(int i) {
-        if (i == 0) {
-            rig.velocity = new Vector3(-dirConstant * 55, 0);
-        } else {
-            rig.velocity = new Vector3(0, 0);
+        if (rig) {
+            if (i == 0) {
+                rig.velocity = new Vector3(-dirConstant * 55, 0);
+            } else {
+                rig.velocity = new Vector3(0, 0);
+            }
         }
     }
 

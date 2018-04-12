@@ -24,6 +24,7 @@ public static class RoundManager {
     public static int screenWidth = 0;
     public static int screenHeight = 0;
 
+    public static bool player2AI = true;
 
     public static void captureScreen() {
         Object.Destroy(lastScreen);
@@ -31,6 +32,10 @@ public static class RoundManager {
         screenWidth = Screen.width;
         screenHeight = Screen.height;
 
+    }
+
+    public static void exitGame() {
+        Application.Quit();
     }
 
     public static void setScreen() {
