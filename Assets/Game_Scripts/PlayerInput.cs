@@ -12,6 +12,7 @@ public static class PlayerInput {
     public static string dodge_right_1p = "Dodge_Right_1P";
     public static string start_1p = "Start_1P";
     public static string select_1p = "Select_1P";
+    public static KeyCode burst_1p = KeyCode.Joystick1Button3;
 
     public static string attack_2p = "Attack_2P";
     public static string jump_2p = "Jump_2P";
@@ -20,6 +21,7 @@ public static class PlayerInput {
     public static string dodge_right_2p = "Dodge_Right_2P";
     public static string start_2p = "Start_2P";
     public static string select_2p = "Select_2P";
+    public static KeyCode burst_2p = KeyCode.Joystick2Button3;
 
     public static void changeToXbox(int player = 1) {
         if (player == 1) {
@@ -30,6 +32,7 @@ public static class PlayerInput {
             dodge_right_1p = "Dodge_Right_1P";
             start_1p = "Start_1P";
             select_1p = "Select_1P";
+            burst_1p = KeyCode.Joystick1Button3;
         } else {
             attack_2p = "Attack_2P";
             jump_2p = "Jump_2P";
@@ -38,6 +41,7 @@ public static class PlayerInput {
             dodge_right_2p = "Dodge_Right_2P";
             start_2p = "Start_2P";
             select_2p = "Select_2P";
+            burst_2p = KeyCode.Joystick2Button3;
         }
     }
 
@@ -50,6 +54,7 @@ public static class PlayerInput {
             dodge_right_1p = "Dodge_Right_1P";
             start_1p = "PS3_Start_P1";
             select_1p = "PS3_Select_P1";
+            burst_1p = KeyCode.Joystick1Button0;
         } else {
             attack_2p = "PS3_Square_P2";
             jump_2p = "Attack_2P";
@@ -58,6 +63,7 @@ public static class PlayerInput {
             dodge_right_2p = "Dodge_Right_2P";
             start_2p = "PS3_Start_P2";
             select_2p = "PS3_Select_P2";
+            burst_2p = KeyCode.Joystick2Button0;
         }
     }
 }

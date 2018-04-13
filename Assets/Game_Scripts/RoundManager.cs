@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 public static class RoundManager {
+    public static Random.State seed;
     public static int player1Wins = 0;
     public static int player2Wins = 0;
 

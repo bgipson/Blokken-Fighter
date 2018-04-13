@@ -32,6 +32,23 @@ public class EnemyAI : MonoBehaviour {
     bool stopThinking;
     bool jumped;
 
+    public void randomizeMoves() {
+        control = GetComponent<FighterController>();
+        animator = GetComponent<Animator>();
+        control.jab_1_num = UnityEngine.Random.Range(0, 3);
+        control.jab_2_num = UnityEngine.Random.Range(0, 3);
+        control.jab_3_num = UnityEngine.Random.Range(0, 3);
+        control.up_tilt_num = UnityEngine.Random.Range(0, 3);
+        control.up_air_num = UnityEngine.Random.Range(0, 3);
+        control.down_air_num = UnityEngine.Random.Range(0, 3);
+
+        animator.SetInteger("Jab_1_Num",control.jab_1_num);
+        animator.SetInteger("Jab_2_Num", control.jab_2_num);
+        animator.SetInteger("Jab_3_Num", control.jab_3_num);
+        animator.SetInteger("Up_Air_Num", control.up_air_num);
+        animator.SetInteger("Down_Air_Num", control.down_air_num);
+        animator.SetInteger("Up_Tilt_Num", control.up_tilt_num);
+    }
     // Use this for initialization
     void Start() {
         
@@ -58,6 +75,7 @@ public class EnemyAI : MonoBehaviour {
         if (!RoundManager.player2AI) {
             control.controllable = true;
             this.enabled = false;
+            //randomizeMoves();
         }
     }
 
@@ -172,7 +190,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void jump() {
-        if (animator.GetBool("Grounded")) {
+        if (animator.GetBool("Grounded") && !(animator.GetBool("Air"))) {
             animator.SetBool("Jump", true);
             animator.SetBool("DamageCheck", false);
             rig.velocity = new Vector3(rig.velocity.x, control.jumpHeight, rig.velocity.z);

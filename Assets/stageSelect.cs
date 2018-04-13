@@ -21,14 +21,14 @@ public class stageSelect : MonoBehaviour {
     bool released = true;
 
 	void Update () {
-        if (released && Input.GetAxis("Horizontal_1P") > 0.3f) {
+        if ((released && (Input.GetAxis("Horizontal_1P") > 0.3f) || Input.GetKeyDown(KeyCode.RightArrow))) {
             if (stageNum + 1 < stages.Length) {
                 videos[stageNum].Stop();
                 stageNum += 1;
                 videos[stageNum].Play();
             }
             released = false;
-        } else if (released && Input.GetAxis("Horizontal_1P") < -0.3f) {
+        } else if ((released && (Input.GetAxis("Horizontal_1P") < -0.3f) || Input.GetKeyDown(KeyCode.LeftArrow))) {
             if (stageNum - 1 >= 0) {
                 videos[stageNum].Stop();
                 stageNum -= 1;
@@ -41,13 +41,20 @@ public class stageSelect : MonoBehaviour {
         //print(Mathf.Abs(Input.GetAxis("Horizontal_1P")));
 
         if (Input.GetButtonDown("Jump_1P")) {
-            RoundManager.player1Wins = 0;
-            RoundManager.player2Wins = 0;
-            SceneManager.LoadScene(stageLevels[stageNum]);
+            StartCoroutine(loadLevel());
         }
         stageSelectText.mainText.text = stageNames[stageNum];
         Vector3 pos = transform.position;
         transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, stages[stageNum].transform.position.z), 0.1f);
         //transform.position = new Vector3(pos.x, pos.y, stages[stageNum].transform.position.z);
+    }
+
+    IEnumerator loadLevel() {
+        RoundManager.player1Wins = 0;
+        RoundManager.player2Wins = 0;
+        PlayerPrefs.SetInt("NextLevel", stageLevels[stageNum]);
+        yield return new WaitForEndOfFrame();
+        RoundManager.setScreen();
+        SceneManager.LoadScene("LoadingScreen");
     }
 }

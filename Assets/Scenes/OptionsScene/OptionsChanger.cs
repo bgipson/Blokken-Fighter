@@ -107,9 +107,11 @@ public class OptionsChanger : MonoBehaviour {
                 break;
             case "Window":
                 s.GetComponentInChildren<Text>().text = windows[Mathf.FloorToInt(s.value)];
-                Screen.fullScreen = !Screen.fullScreen;
-
-
+                if (s.value == 0) {
+                    Screen.fullScreen = false;
+                } else {
+                    Screen.fullScreen = true;
+                }
                 break;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.PostProcessing;
 
 public class FighterController : MonoBehaviour {
 
@@ -32,11 +33,23 @@ public class FighterController : MonoBehaviour {
 
     bool guardBreak;
 
+    PostProcessingBehaviour postProcessing;
+    public PostProcessingProfile burstProfile;
+    PostProcessingProfile prior;
+    
+
     // Use this for initialization
+    GameManager manager;
     void Start() {
         animator = GetComponent<Animator>();
         rig = GetComponent<Rigidbody>();
         playerHitbox = GetComponent<EnemyDamage>();
+        manager = FindObjectOfType<GameManager>();
+
+        postProcessing = FindObjectOfType<PostProcessingBehaviour>();
+        if (postProcessing) {
+            prior = postProcessing.profile;
+        }
 
         bool initialized = false;
         FighterSetup[] setups = FindObjectsOfType<FighterSetup>();
@@ -62,6 +75,7 @@ public class FighterController : MonoBehaviour {
             animator.SetInteger("Down_Air_Num", down_air_num);
             animator.SetInteger("Up_Tilt_Num", up_tilt_num);
         }
+
     }
 
     private void InitializeFromSetup(FighterSetup setup)
@@ -75,6 +89,12 @@ public class FighterController : MonoBehaviour {
 
     public Animator getAnimator() {
         return animator;
+    }
+
+    bool burst = false;
+    bool canBurst = true;
+    public bool getBurst() {
+        return burst;
     }
 
     Vector3 tempPos;
@@ -157,11 +177,29 @@ public class FighterController : MonoBehaviour {
 
         if (guardBreak) {
             animator.SetBool("Guard", false);
-            guardMeter += 0.15f * Time.timeScale;
+            if (burst) {
+                guardMeter += 0.45f * Time.timeScale;
+            } else {
+                guardMeter += 0.15f * Time.timeScale;
+            }
         }
         if (guardBreak && guardMeter >= 100) {
             guardMeter = 100;
             guardBreak = false;
+            animator.speed = 1;
+            if (burst) {
+                CameraFunctions camfuncs = FindObjectOfType<CameraFunctions>();
+                if (camfuncs) {
+                    camfuncs.shake(0.2f, 0.3f);
+                }
+            }
+            burst = false;
+            if (manager) {
+                manager.hitFreeze = false;
+            }
+            if (postProcessing) {
+                postProcessing.profile = prior;
+            }
         }
         if (guardMeter > 100) {
             guardMeter = 100;
@@ -172,6 +210,7 @@ public class FighterController : MonoBehaviour {
 
 
         if (animator.GetBool("Moveable") || animator.GetBool("DamageCheck")) gravitation = false;
+        if (manager.trainingMode) canBurst = true;
     }
 
     public bool getGuardBreak() {
@@ -185,7 +224,7 @@ public class FighterController : MonoBehaviour {
             animator.SetBool("Attack", true);
         }
 
-        if (!guardBreak) {
+        if (!guardBreak || burst) {
             if ((p1 && Input.GetButtonDown(PlayerInput.dodge_right_1p)) || (p2 && Input.GetButtonDown(PlayerInput.dodge_right_2p))) {
                 animator.SetBool("Dodge", true);
                 dodgeConstant = 1;
@@ -246,7 +285,29 @@ public class FighterController : MonoBehaviour {
             animator.SetBool("DamageCheck", false);
             rig.velocity = new Vector3(rig.velocity.x, jumpHeight, rig.velocity.z);
         }
+
+        //For BURST
+        if ((p1 && Input.GetKeyDown(PlayerInput.burst_1p)) || (p1 && Input.GetKeyDown(KeyCode.A)) || (p2 && Input.GetKeyDown(PlayerInput.burst_2p))) {
+            if (canBurst && !guardBreak) {
+                burst = true;
+                canBurst = false;
+                animator.SetBool("Burst", true);
+                guardMeter = 0;
+                health -= (health / 2);
+                animator.speed = 2f;
+                guardBreak = true;
+                CameraFunctions camfuncs = FindObjectOfType<CameraFunctions>();
+                if (camfuncs) camfuncs.shake(0.2f, 0.3f);
+                
+                if (manager) manager.hitFreeze = true;
+                
+                if (postProcessing) postProcessing.profile = burstProfile;
+            }
+
+        }
     }
+
+    
 
     //Plays an Audio Clip for an Animation
     public void PlayAudio(AudioClip clip) {
@@ -298,7 +359,12 @@ public class FighterController : MonoBehaviour {
     public void dodge() {
 
         rig.velocity = new Vector3(dodgeConstant * 50, rig.velocity.y, rig.velocity.z);
-        guardMeter -= 10;
+        if (!burst) {
+            guardMeter -= 10;
+        }
+        if (burst) {
+            guardMeter += 2;
+        }
     }
 
     public void airDodge() {

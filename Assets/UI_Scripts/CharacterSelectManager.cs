@@ -23,17 +23,19 @@ public class CharacterSelectManager : MonoBehaviour {
 
 	void Start ()
     {
-        if (playerNum == 2) {
-            RoundManager.player2AI = true;
-            selectButton = PlayerInput.jump_2p;
-        }
+        s = FindObjectOfType<CharacterSelectScreen>();
         selectedFirst.Select();
         currentButton = selectedFirst;
         customizeAnimator = controller.GetComponent<Animator>();
         customizeAnimator.SetInteger("PlayerNum", playerNum);
         setup = new Dictionary<string, int>();
         SetAllToType("BOXER");
-	}
+        if (playerNum == 2) {
+            selectButton = PlayerInput.jump_2p;
+        }
+        
+    }
+
 
     public void Ready()
     {
@@ -76,6 +78,15 @@ public class CharacterSelectManager : MonoBehaviour {
         setup["Up_Tilt_Num"] = setting;
         setup["Up_Air_Num"] = setting;
         setup["Down_Air_Num"] = setting;
+    }
+
+    public void SetAllToRandom() {
+        setup["Jab_1_Num"] = Random.Range(0, 3);
+        setup["Jab_2_Num"] = Random.Range(0, 3); 
+        setup["Jab_3_Num"] = Random.Range(0, 3);
+        setup["Up_Tilt_Num"] = Random.Range(0, 3);
+        setup["Up_Air_Num"] = Random.Range(0, 3);
+        setup["Down_Air_Num"] = Random.Range(0, 3);
     }
 
     public void PlayJab(int num, int jab)
@@ -186,11 +197,13 @@ public class CharacterSelectManager : MonoBehaviour {
         }
     }
 
+    CharacterSelectScreen s;
     public void player2_check() {
-        if (playerNum == 2 && !customizeAnimator.GetBool("PlayerStart")) {
+        if (playerNum == 2 && !customizeAnimator.GetBool("PlayerStart") && !s.player1Ready) {
             string[] buttons2p = new string[] { "Start_2P", "Select_2P", "Attack_2P", "Jump_2P", "Guard_2P", "Dodge_Left_2P", "Dodge_Right_2P" };
             foreach (string button in buttons2p) {
                 if (Input.GetButton(button)) {
+                    SetAllToType("BOXER");
                     customizeAnimator.SetBool("PlayerStart",true);
                     RoundManager.player2AI = false;
                 }

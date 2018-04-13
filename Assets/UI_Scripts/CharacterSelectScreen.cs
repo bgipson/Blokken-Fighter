@@ -40,6 +40,21 @@ public class CharacterSelectScreen : MonoBehaviour
 
         if (player1Ready && (RoundManager.player2AI || player2Ready))
         {
+            if (RoundManager.player2AI == true) {
+                GameObject randomExport = new GameObject("Player2");
+                print("AYA");
+                Dictionary<string, int>  setup = new Dictionary<string, int>();
+                setup["Jab_1_Num"] = Random.Range(0, 3);
+                setup["Jab_2_Num"] = Random.Range(0, 3);
+                setup["Jab_3_Num"] = Random.Range(0, 3);
+                setup["Up_Tilt_Num"] = Random.Range(0, 3);
+                setup["Up_Air_Num"] = Random.Range(0, 3);
+                setup["Down_Air_Num"] = Random.Range(0, 3);
+                FighterSetup export = randomExport.AddComponent<FighterSetup>();
+                export.name = "Player2";
+                export.setup = setup;
+                DontDestroyOnLoad(randomExport);
+            }
             StartCoroutine(playersReady(2));
         }
     }

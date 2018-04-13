@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        startTimer();
+        
         FighterController[] fighters = FindObjectsOfType<FighterController>();
         player1 = fighters[0];
         player2 = fighters[1];
@@ -67,7 +67,33 @@ public class GameManager : MonoBehaviour {
         combo2Text = combo2Animator.gameObject.GetComponentInChildren<OutlineText>();
 
         koText = FindObjectOfType<KOText>();
+
 	}
+
+    public void waitFight() {
+        player1.controllable = false;
+        if (player2.gameObject.GetComponent<EnemyAI>()) {
+            player2.gameObject.GetComponent<EnemyAI>().enabled = false;
+        }
+        player2.controllable = false;
+    }
+
+    public void startFight() {
+        player1.controllable = true;
+        if (RoundManager.player2AI) {
+            if (player2.gameObject.GetComponent<EnemyAI>()) {
+                player2.gameObject.GetComponent<EnemyAI>().enabled = true;
+            }
+            player2.controllable = false;
+        } else {
+            if (player2.gameObject.GetComponent<EnemyAI>()) {
+                player2.gameObject.GetComponent<EnemyAI>().enabled = false;
+            }
+            player2.controllable = true;
+        }
+        
+        startTimer();
+    }
 	
 	// Update is called once per frame
 	void Update () {

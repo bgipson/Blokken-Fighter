@@ -5,7 +5,9 @@ licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - normalMat: {fileID: 2100000, guid: 5a8b752e13e10b646ad6f6b8728c5126, type: 2}
+  - burstMat: {fileID: 2100000, guid: c90f9b54e1bc8c1418fd7d608cb1f017, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

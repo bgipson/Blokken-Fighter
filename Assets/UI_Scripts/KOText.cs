@@ -84,6 +84,8 @@ public class KOText : MonoBehaviour {
             SceneManager.LoadScene("Results");
             
         } else {
+            yield return new WaitForEndOfFrame();
+            RoundManager.setScreen();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         
